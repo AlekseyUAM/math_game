@@ -7,7 +7,7 @@ from scores import Scores
 
 
 def get_explosion_anim():
-    explosion_anim = {'lg': [], 'sm': []}
+    explosion_anim = {'lg': [], 'sm': [], 'gun': []}
     for i in range(1, 13):
         img = pygame.image.load(f'images/exp1_{i}.png').convert()
         img.set_colorkey((0, 0, 0))
@@ -15,11 +15,15 @@ def get_explosion_anim():
         explosion_anim['lg'].append(img_lg)
         img_sm = pygame.transform.scale(img, (75, 75))
         explosion_anim['sm'].append(img_sm)
+        img = pygame.image.load(f'images/exp3_{i}.png').convert()
+        img.set_colorkey((0, 0, 0))
+        img_gun = pygame.transform.scale(img, (200, 200))
+        explosion_anim['gun'].append(img_gun)
+
     return explosion_anim
 
 
 class Game:
-
     def __init__(self):
         pygame.init()
         pygame.display.set_caption('space invaders')
@@ -33,7 +37,6 @@ class Game:
         self.stats = Stats()
         self.sc = Scores(self.screen, self.stats)
         self.explosion_anim = get_explosion_anim()
-
 
 def run():
 
