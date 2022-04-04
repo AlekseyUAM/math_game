@@ -8,6 +8,7 @@ from scores import Scores
 
 def run():
 
+    print('run')
     pygame.init()
     screen = pygame.display.set_mode((700, 800))
     pygame.display.set_caption('space invaders')
@@ -27,7 +28,7 @@ def run():
             gun.update_gun()
             controls.update(bg_color, screen, stats, sc, gun, aliens, bullets, expls)
             controls.update_bullets(screen, stats, sc, aliens, bullets, explosion_anim, expls)
-            controls.update_aliens(stats, screen, sc, gun, aliens, bullets)
+            controls.update_aliens(stats, screen, sc, gun, aliens, bullets, explosion_anim, expls)
 
 
 def get_explosion_anim():
@@ -35,9 +36,9 @@ def get_explosion_anim():
     for i in range(1, 13):
         img = pygame.image.load(f'images/exp1_{i}.png').convert()
         img.set_colorkey((0, 0, 0))
-        img_lg = pygame.transform.scale(img, (75, 75))
+        img_lg = pygame.transform.scale(img, (150, 150))
         explosion_anim['lg'].append(img_lg)
-        img_sm = pygame.transform.scale(img, (32, 32))
+        img_sm = pygame.transform.scale(img, (75, 75))
         explosion_anim['sm'].append(img_sm)
     return explosion_anim
 

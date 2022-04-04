@@ -47,7 +47,7 @@ def update_bullets(screen, stats, sc, aliens, bullets, explosion_anim, expls):
         for col_aliens in collisions.values():
             stats.score += len(col_aliens)
             for col_alien in col_aliens:
-                expl = Explosion(col_alien.rect.center, 'lg', explosion_anim)
+                expl = Explosion(col_alien.rect.center, 'sm', explosion_anim)
                 expls.add(expl)
         sc.image_score()
         check_high_score(stats, sc)
@@ -57,11 +57,11 @@ def update_bullets(screen, stats, sc, aliens, bullets, explosion_anim, expls):
         create_army(screen, aliens)
 
 
-def update_aliens(stats, screen, sc, gun, aliens, bullets):
+def update_aliens(stats, screen, sc, gun, aliens, bullets, explosion_anim, expls):
     aliens.update()
     if pygame.sprite.spritecollideany(gun, aliens):
-        gun_kill(stats, screen, sc, gun, aliens, bullets)
-    aliens_check(stats, screen, sc, gun, aliens, bullets)
+        gun_kill(stats, screen, sc, gun, aliens, bullets, explosion_anim, expls)
+    aliens_check(stats, screen, sc, gun, aliens, bullets, explosion_anim, expls)
 
 
 def create_army(screen, aliens):
@@ -81,7 +81,8 @@ def create_army(screen, aliens):
             aliens.add(alien)
 
 
-def gun_kill(stats, screen, sc, gun, aliens, bullets):
+def gun_kill(stats, screen, sc, gun, aliens, bullets, explosion_anim, expls):
+
     if stats.guns_left > 0:
         stats.guns_left -= 1
         sc.image_guns()
@@ -89,17 +90,17 @@ def gun_kill(stats, screen, sc, gun, aliens, bullets):
         bullets.empty()
         create_army(screen, aliens)
         gun.create_gun()
-        time.sleep(2)
+        time.sleep(1)
     else:
         stats.run_game = False
         sys.exit()
 
 
-def aliens_check(stats, screen, sc, gun, aliens, bullets):
+def aliens_check(stats, screen, sc, gun, aliens, bullets, explosion_anim, expls):
     screen_rect = screen.get_rect()
     for alien in aliens.sprites():
         if alien.rect.bottom >= screen_rect.bottom:
-            gun_kill(stats, screen, sc, gun, aliens, bullets)
+            gun_kill(stats, screen, sc, gun, aliens, bullets, explosion_anim, expls)
             break
 
 
