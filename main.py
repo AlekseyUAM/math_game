@@ -6,31 +6,6 @@ from stats import Stats
 from scores import Scores
 
 
-def run():
-
-    print('run')
-    pygame.init()
-    screen = pygame.display.set_mode((700, 800))
-    pygame.display.set_caption('space invaders')
-    bg_color = (0, 0, 0)
-    gun = Gun(screen)
-    bullets = Group()
-    aliens = Group()
-    expls = Group()
-    controls.create_army(screen, aliens)
-    stats = Stats()
-    sc = Scores(screen, stats)
-    explosion_anim = get_explosion_anim()
-
-    while True:
-        controls.events(screen, gun, bullets)
-        if stats.run_game:
-            gun.update_gun()
-            controls.update(bg_color, screen, stats, sc, gun, aliens, bullets, expls)
-            controls.update_bullets(screen, stats, sc, aliens, bullets, explosion_anim, expls)
-            controls.update_aliens(stats, screen, sc, gun, aliens, bullets, explosion_anim, expls)
-
-
 def get_explosion_anim():
     explosion_anim = {'lg': [], 'sm': []}
     for i in range(1, 13):
@@ -41,6 +16,35 @@ def get_explosion_anim():
         img_sm = pygame.transform.scale(img, (75, 75))
         explosion_anim['sm'].append(img_sm)
     return explosion_anim
+
+
+class Game:
+
+    def __init__(self):
+        pygame.init()
+        pygame.display.set_caption('space invaders')
+        self.screen = pygame.display.set_mode((700, 800))
+        self.bg_color = (0, 0, 0)
+        self.gun = Gun(self.screen)
+        self.bullets = Group()
+        self.aliens = Group()
+        self.expls = Group()
+        controls.create_army(self.screen, self.aliens)
+        self.stats = Stats()
+        self.sc = Scores(self.screen, self.stats)
+        self.explosion_anim = get_explosion_anim()
+
+
+def run():
+
+    game = Game()
+    while True:
+        controls.events(game)
+        if game.stats.run_game:
+            game.gun.update_gun()
+            controls.update(game)
+            controls.update_bullets(game)
+            controls.update_aliens(game)
 
 
 run()

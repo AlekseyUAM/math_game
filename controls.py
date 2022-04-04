@@ -6,62 +6,64 @@ from explosion import Explosion
 import time
 
 
-def events(screen, gun, bullets):
+def events(game):
     for event in pygame.event.get():
         if event.type == pygame.QUIT:
             sys.exit()
         elif event.type == pygame.KEYDOWN:
             if event.key == pygame.K_RIGHT:
-                gun.mright = True
+                game.gun.mright = True
             elif event.key == pygame.K_LEFT:
-                gun.mleft = True
+                game.gun.mleft = True
             elif event.key == pygame.K_SPACE:
-                new_bullet = Bullet(screen, gun)
-                bullets.add(new_bullet)
+                new_bullet = Bullet(game.screen, game.gun)
+                game.bullets.add(new_bullet)
         elif event.type == pygame.KEYUP:
             if event.key == pygame.K_RIGHT:
-                gun.mright = False
+                game.gun.mright = False
             elif event.key == pygame.K_LEFT:
-                gun.mleft = False
+                game.gun.mleft = False
 
 
-def update(bg_color, screen, stats, sc, gun, aliens, bullets, expls):
-    screen.fill(bg_color)
-    sc.show_score()
-    for bullet in bullets.sprites():
+def update(game):
+    game.screen.fill(game.bg_color)
+    game.sc.show_score()
+    for bullet in game.bullets.sprites():
         bullet.draw_bullet()
-    gun.output()
-    aliens.draw(screen)
-    expls.update()
-    expls.draw(screen)
+    game.gun.output()
+    game.aliens.draw(game.screen)
+    game.expls.update()
+    game.expls.draw(game.screen)
     pygame.display.flip()
 
 
-def update_bullets(screen, stats, sc, aliens, bullets, explosion_anim, expls):
-    bullets.update()
-    for bullet in bullets.copy():
+def update_bullets(game):
+    game.bullets.update()
+    for bullet in game.bullets.copy():
         if bullet.rect.bottom <= 0:
-            bullets.remove(bullet)
-    collisions = pygame.sprite.groupcollide(bullets, aliens, True, True)
+            game.bullets.remove(bullet)
+    collisions = pygame.sprite.groupcollide(game.bullets, game.aliens, True,
+                                            True)
     if collisions:
         for col_aliens in collisions.values():
-            stats.score += len(col_aliens)
+            game.stats.score += len(col_aliens)
             for col_alien in col_aliens:
-                expl = Explosion(col_alien.rect.center, 'sm', explosion_anim)
-                expls.add(expl)
-        sc.image_score()
-        check_high_score(stats, sc)
-        sc.image_guns()
-    if len(aliens) == 0:
-        bullets.empty()
-        create_army(screen, aliens)
+                expl = Explosion(col_alien.rect.center, 'sm',
+                                 game.explosion_anim)
+                game.expls.add(expl)
+        game.sc.image_score()
+        check_high_score(game.stats, game.sc)
+        game.sc.image_guns()
+    if len(game.aliens) == 0:
+        game.bullets.empty()
+        create_army(game.screen, game.aliens)
 
 
-def update_aliens(stats, screen, sc, gun, aliens, bullets, explosion_anim, expls):
-    aliens.update()
-    if pygame.sprite.spritecollideany(gun, aliens):
-        gun_kill(stats, screen, sc, gun, aliens, bullets, explosion_anim, expls)
-    aliens_check(stats, screen, sc, gun, aliens, bullets, explosion_anim, expls)
+def update_aliens(game):
+    game.aliens.update()
+    if pygame.sprite.spritecollideany(game.gun, game.aliens):
+        gun_kill(game)
+    aliens_check(game)
 
 
 def create_army(screen, aliens):
@@ -81,26 +83,26 @@ def create_army(screen, aliens):
             aliens.add(alien)
 
 
-def gun_kill(stats, screen, sc, gun, aliens, bullets, explosion_anim, expls):
+def gun_kill(game):
 
-    if stats.guns_left > 0:
-        stats.guns_left -= 1
-        sc.image_guns()
-        aliens.empty()
-        bullets.empty()
-        create_army(screen, aliens)
-        gun.create_gun()
+    if game.stats.guns_left > 0:
+        game.stats.guns_left -= 1
+        game.sc.image_guns()
+        game.aliens.empty()
+        game.bullets.empty()
+        create_army(game.screen, game.aliens)
+        game.gun.create_gun()
         time.sleep(1)
     else:
-        stats.run_game = False
+        game.stats.run_game = False
         sys.exit()
 
 
-def aliens_check(stats, screen, sc, gun, aliens, bullets, explosion_anim, expls):
-    screen_rect = screen.get_rect()
-    for alien in aliens.sprites():
+def aliens_check(game):
+    screen_rect = game.screen.get_rect()
+    for alien in game.aliens.sprites():
         if alien.rect.bottom >= screen_rect.bottom:
-            gun_kill(stats, screen, sc, gun, aliens, bullets, explosion_anim, expls)
+            gun_kill(game)
             break
 
 
