@@ -41,8 +41,8 @@ def update_bullets(screen, stats, sc, aliens, bullets):
             bullets.remove(bullet)
     collisions = pygame.sprite.groupcollide(bullets, aliens, True, True)
     if collisions:
-        for aliens in collisions.values():
-            stats.score += len(aliens)
+        for col_aliens in collisions.values():
+            stats.score += len(col_aliens)
         sc.image_score()
         check_high_score(stats, sc)
         sc.image_guns()
