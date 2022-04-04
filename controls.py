@@ -2,6 +2,7 @@ import pygame
 import sys
 from bullet import Bullet
 from alien import Alien
+from explosion import Explosion
 import time
 
 
@@ -24,17 +25,19 @@ def events(screen, gun, bullets):
                 gun.mleft = False
 
 
-def update(bg_color, screen, stats, sc, gun, aliens, bullets):
+def update(bg_color, screen, stats, sc, gun, aliens, bullets, expls):
     screen.fill(bg_color)
     sc.show_score()
     for bullet in bullets.sprites():
         bullet.draw_bullet()
     gun.output()
     aliens.draw(screen)
+    expls.update()
+    expls.draw(screen)
     pygame.display.flip()
 
 
-def update_bullets(screen, stats, sc, aliens, bullets):
+def update_bullets(screen, stats, sc, aliens, bullets, explosion_anim, expls):
     bullets.update()
     for bullet in bullets.copy():
         if bullet.rect.bottom <= 0:
@@ -43,6 +46,9 @@ def update_bullets(screen, stats, sc, aliens, bullets):
     if collisions:
         for col_aliens in collisions.values():
             stats.score += len(col_aliens)
+            for col_alien in col_aliens:
+                expl = Explosion(col_alien.rect.center, 'lg', explosion_anim)
+                expls.add(expl)
         sc.image_score()
         check_high_score(stats, sc)
         sc.image_guns()
